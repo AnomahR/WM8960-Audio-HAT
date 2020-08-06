@@ -1,0 +1,25 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
+
+RUN install_packages \
+    raspberrypi-kernel-headers \
+    raspberrypi-kernel \
+    dkms \
+    git \
+    i2c-tools \
+    libasound2-plugins
+
+COPY . /usr/src/bluetooth-driver/
+
+WORKDIR /usr/src/bluetooth-driver
+
+# Copy calls from install script
+COPY wm8960-soundcard.dtbo /boot/overlays
+
+COPY *.conf /etc/wm8960-soundcard/
+COPY *.state /etc/wm8960-soundcard/
+
+COPY wm8960-soundcard /usr/bin/
+COPY wm8960-soundcard.service /lib/systemd/system/
+
+RUN ["/bin/bash", "-c", "./install.sh"]
+

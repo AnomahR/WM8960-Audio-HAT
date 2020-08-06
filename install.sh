@@ -5,12 +5,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-is_Raspberry=$(cat /proc/device-tree/model | awk  '{print $1}')
-if [ "x${is_Raspberry}" != "xRaspberry" ] ; then
-  echo "Sorry, this drivers only works on raspberry pi"
-  exit 1
-fi
-
 ver="1.0"
 
 
@@ -18,9 +12,9 @@ ver="1.0"
 # the sources during kernel updates
 marker="0.0.0"
 
-apt update
-apt-get -y install raspberrypi-kernel-headers raspberrypi-kernel 
-apt-get -y install  dkms git i2c-tools libasound2-plugins
+#apt update
+#apt-get -y install raspberrypi-kernel-headers raspberrypi-kernel 
+#apt-get -y install  dkms git i2c-tools libasound2-plugins
 
 # locate currently installed kernels (may be different to running kernel if
 # it's just been updated)
@@ -50,7 +44,7 @@ function install_module {
 install_module "./" "wm8960-soundcard"
 
 # install dtbos
-cp wm8960-soundcard.dtbo /boot/overlays
+#cp wm8960-soundcard.dtbo /boot/overlays
 
 
 #set kernel moduels
@@ -73,13 +67,13 @@ grep -q "dtoverlay=wm8960-soundcard" /boot/config.txt || \
   echo "dtoverlay=wm8960-soundcard" >> /boot/config.txt
   
 #install config files
-mkdir /etc/wm8960-soundcard || true
-cp *.conf /etc/wm8960-soundcard
-cp *.state /etc/wm8960-soundcard
+#mkdir /etc/wm8960-soundcard || true
+#cp *.conf /etc/wm8960-soundcard
+#cp *.state /etc/wm8960-soundcard
 
 #set service 
-cp wm8960-soundcard /usr/bin/
-cp wm8960-soundcard.service /lib/systemd/system/
+#cp wm8960-soundcard /usr/bin/
+#cp wm8960-soundcard.service /lib/systemd/system/
 systemctl enable  wm8960-soundcard.service 
 systemctl start wm8960-soundcard                                
 
