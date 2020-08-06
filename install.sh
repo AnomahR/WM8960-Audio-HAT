@@ -18,30 +18,32 @@ marker="0.0.0"
 
 # locate currently installed kernels (may be different to running kernel if
 # it's just been updated)
-kernels=$(ls /lib/modules | sed "s/^/-k /")
-uname_r=$(uname -r)
+#kernels=$(ls /lib/modules | sed "s/^/-k /")
+#uname_r=$(uname -r)
+boot_dir="/mnt/boot/"
+boot_config="$boot_dir/config.txt"
 
-function install_module {
-  src=$1
-  mod=$2
+#function install_module {
+#  src=$1
+#  mod=$2
+#
+#  if [[ -d /var/lib/dkms/$mod/$ver/$marker ]]; then
+#    rmdir /var/lib/dkms/$mod/$ver/$marker
+#  fi
+#
+#  if [[ -e /usr/src/$mod-$ver || -e /var/lib/dkms/$mod/$ver ]]; then
+#    dkms remove --force -m $mod -v $ver --all
+#   rm -rf /usr/src/$mod-$ver
+#  fi
+#  mkdir -p /usr/src/$mod-$ver
+#  cp -a $src/* /usr/src/$mod-$ver/
+#  dkms add -m $mod -v $ver
+#  dkms build $uname_r -m $mod -v $ver && dkms install --force $uname_r -m $mod -v $ver
+#
+#  mkdir -p /var/lib/dkms/$mod/$ver/$marker
+#}
 
-  if [[ -d /var/lib/dkms/$mod/$ver/$marker ]]; then
-    rmdir /var/lib/dkms/$mod/$ver/$marker
-  fi
-
-  if [[ -e /usr/src/$mod-$ver || -e /var/lib/dkms/$mod/$ver ]]; then
-    dkms remove --force -m $mod -v $ver --all
-    rm -rf /usr/src/$mod-$ver
-  fi
-  mkdir -p /usr/src/$mod-$ver
-  cp -a $src/* /usr/src/$mod-$ver/
-  dkms add -m $mod -v $ver
-  dkms build $uname_r -m $mod -v $ver && dkms install --force $uname_r -m $mod -v $ver
-
-  mkdir -p /var/lib/dkms/$mod/$ver/$marker
-}
-
-install_module "./" "wm8960-soundcard"
+#install_module "./" "wm8960-soundcard"
 
 # install dtbos
 #cp wm8960-soundcard.dtbo /boot/overlays
@@ -56,15 +58,15 @@ grep -q "snd-soc-wm8960-soundcard" /etc/modules || \
   echo "snd-soc-wm8960-soundcard" >> /etc/modules  
   
 #set dtoverlays
-sed -i -e 's:#dtparam=i2c_arm=on:dtparam=i2c_arm=on:g'  /boot/config.txt || true
-grep -q "dtoverlay=i2s-mmap" /boot/config.txt || \
-  echo "dtoverlay=i2s-mmap" >> /boot/config.txt
+sed -i -e 's:#dtparam=i2c_arm=on:dtparam=i2c_arm=on:g'  $boot_config || true
+grep -q "dtoverlay=i2s-mmap" $boot_config || \
+  echo "dtoverlay=i2s-mmap" >> $boot_config
 
-grep -q "dtparam=i2s=on" /boot/config.txt || \
-  echo "dtparam=i2s=on" >> /boot/config.txt
+grep -q "dtparam=i2s=on" $boot_config || \
+  echo "dtparam=i2s=on" >> $boot_config
 
-grep -q "dtoverlay=wm8960-soundcard" /boot/config.txt || \
-  echo "dtoverlay=wm8960-soundcard" >> /boot/config.txt
+grep -q "dtoverlay=wm8960-soundcard" $boot_config || \
+  echo "dtoverlay=wm8960-soundcard" >> $boot_config
   
 #install config files
 #mkdir /etc/wm8960-soundcard || true
@@ -74,7 +76,7 @@ grep -q "dtoverlay=wm8960-soundcard" /boot/config.txt || \
 #set service 
 #cp wm8960-soundcard /usr/bin/
 #cp wm8960-soundcard.service /lib/systemd/system/
-systemctl enable  wm8960-soundcard.service 
+systemctl enable wm8960-soundcard.service 
 systemctl start wm8960-soundcard                                
 
 echo "------------------------------------------------------"
