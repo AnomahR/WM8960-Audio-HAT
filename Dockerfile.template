@@ -1,38 +1,77 @@
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
+#FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
 
-ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
-ENV UDEV=1
+#RUN apt-get update && \
+#    apt-get install --no-install-recommends \
+#    # dependencies audio-driver
+#    dkms \
+#    i2c-tools \
+#    libasound2-plugins \
+#    alsa-base \
+#    alsa-utils \
+#    # dependencies linux kernel build
+#    git \
+#    bc \
+#    bison \
+#    flex \
+#    libssl-dev \
+#    make && \
+#    rm -rf /var/lib/apt/lists
 
-ENV DRIVER_VERSION="1.0.0"
-ENV DRIVER_NAME="wm8960-soundcard"
+# Install kernel headers
+#RUN apt-get update && \
+#    apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel
+#
+#RUN apt-get install raspberrypi-kernel-headers
 
-RUN install_packages \
-    raspberrypi-kernel-headers \
-    raspberrypi-kernel \
+#COPY . "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
+
+#WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
+
+# Install kernel module
+#RUN ["/bin/bash", "-c", "dkms add -m $DRIVER_NAME -v $DRIVER_VERSION && \
+#                         dkms build $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION && \
+#                         dkms install --force $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION"]
+
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian
+
+RUN apt-get update && apt-get install -y \
+    # kernel build
+    curl \
+    wget \
+    build-essential \
+    libelf-dev \
+    awscli \
+    bc \
+    flex \
+    libssl-dev \
+    python \
+    bison \
+    # audio-driver
     dkms \
-    git \
     i2c-tools \
     libasound2-plugins \
     alsa-base \
-    alsa-utils 
+    alsa-utils && \
+    # cleanup
+    rm -rf /var/lib/apt/lists
+
+ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket \
+    UDEV=1 \
+    DRIVER_VERSION="1.0.0" \
+    DRIVER_NAME="wm8960-soundcard"
 
 COPY . "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-
 WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
 
-RUN uname -r >> /root/tmp_uname
-RUN ["/bin/bash", "-c", "dkms add -m $DRIVER_NAME -v $DRIVER_VERSION"]
-RUN ["/bin/bash", "-c", "dkms build $(cat /root/tmp_uname) -m $DRIVER_NAME -v $DRIVER_VERSION"]
-RUN ["/bin/bash", "-c", "dkms install --force $(cat /root/tmp_uname) -m $DRIVER_NAME -v $DRIVER_VERSION"]
+ENV VERSION '2.48.0+rev1.prod'
+RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./kernel-module-build/build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src .
 
 # Copy calls from install script
 COPY wm8960-soundcard.dtbo /boot/overlays
-
-COPY *.conf /etc/wm8960-soundcard/
-COPY *.state /etc/wm8960-soundcard/
-
+COPY *.state *.conf /etc/wm8960-soundcard/
 COPY wm8960-soundcard /usr/bin/
 COPY wm8960-soundcard.service /lib/systemd/system/
 
-CMD ["/bin/bash", "-c", "modprobe i2c-dev && ./install.sh && sleep infinity"]
+RUN ./install.sh
 
+CMD ./kernel-module-build/run.sh

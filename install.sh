@@ -18,7 +18,7 @@ marker="0.0.0"
 
 # locate currently installed kernels (may be different to running kernel if
 # it's just been updated)
-#kernels=$(ls /lib/modules | sed "s/^/-k /")
+kernels=$(ls /lib/modules | sed "s/^/-k /")
 #uname_r=$(uname -r)
 boot_dir="/mnt/boot/"
 boot_config="$boot_dir/config.txt"
