@@ -1,32 +1,3 @@
-#FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
-
-#RUN apt-get update && \
-#    apt-get install --no-install-recommends \
-#    # dependencies audio-driver
-#    dkms \
-#    i2c-tools \
-#    libasound2-plugins \
-#    alsa-base \
-#    alsa-utils \
-#    # dependencies linux kernel build
-#    git \
-#    bc \
-#    bison \
-#    flex \
-#    libssl-dev \
-#    make && \
-#    rm -rf /var/lib/apt/lists
-
-# Install kernel headers
-#RUN apt-get update && \
-#    apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel
-#
-#RUN apt-get install raspberrypi-kernel-headers
-
-#COPY . "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-
-#WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-
 FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
 
 RUN apt-get update && apt-get install -y \
