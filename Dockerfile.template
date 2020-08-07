@@ -32,7 +32,7 @@
 #                         dkms build $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION && \
 #                         dkms install --force $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION"]
 
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
 
 RUN apt-get update && apt-get install -y \
     # kernel build
@@ -61,10 +61,10 @@ ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket \
     DRIVER_NAME="wm8960-soundcard"
 
 COPY . "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
+WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION"
 
 ENV VERSION '2.48.0+rev1.prod'
-RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./kernel-module-build/build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src .
+RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./kernel-module-build/build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src ./wm8960
 
 # Copy calls from install script
 COPY wm8960-soundcard.dtbo /boot/overlays
