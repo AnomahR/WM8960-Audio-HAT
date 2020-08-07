@@ -60,13 +60,14 @@ ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket \
     DRIVER_VERSION="1.0.0" \
     DRIVER_NAME="wm8960-soundcard"
 
-COPY . "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION"
+COPY . "/usr/src/app/"
+WORKDIR "/usr/src/app/kernel-module-build"
 
 ENV VERSION '2.48.0+rev1.prod'
-RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./kernel-module-build/build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src ./wm8960
+RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src ../wm8960
 
 # Copy calls from install script
+WORKDIR "/usr/src/app"
 COPY wm8960-soundcard.dtbo /boot/overlays
 COPY *.state *.conf /etc/wm8960-soundcard/
 COPY wm8960-soundcard /usr/bin/

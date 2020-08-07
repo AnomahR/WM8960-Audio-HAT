@@ -57,16 +57,16 @@ grep -q "snd-soc-wm8960" /etc/modules || \
 grep -q "snd-soc-wm8960-soundcard" /etc/modules || \
   echo "snd-soc-wm8960-soundcard" >> /etc/modules  
   
-#set dtoverlays
-sed -i -e 's:#dtparam=i2c_arm=on:dtparam=i2c_arm=on:g'  $boot_config || true
-grep -q "dtoverlay=i2s-mmap" $boot_config || \
-  echo "dtoverlay=i2s-mmap" >> $boot_config
-
-grep -q "dtparam=i2s=on" $boot_config || \
-  echo "dtparam=i2s=on" >> $boot_config
-
-grep -q "dtoverlay=wm8960-soundcard" $boot_config || \
-  echo "dtoverlay=wm8960-soundcard" >> $boot_config
+#set dtoverlays - probably set in balena config
+#sed -i -e 's:#dtparam=i2c_arm=on:dtparam=i2c_arm=on:g'  $boot_config || true
+#grep -q "dtoverlay=i2s-mmap" $boot_config || \
+#  echo "dtoverlay=i2s-mmap" >> $boot_config
+#
+#grep -q "dtparam=i2s=on" $boot_config || \
+#  echo "dtparam=i2s=on" >> $boot_config
+#
+#grep -q "dtoverlay=wm8960-soundcard" $boot_config || \
+#  echo "dtoverlay=wm8960-soundcard" >> $boot_config
   
 #install config files
 #mkdir /etc/wm8960-soundcard || true
