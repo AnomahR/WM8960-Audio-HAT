@@ -27,11 +27,6 @@
 
 #WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
 
-# Install kernel module
-#RUN ["/bin/bash", "-c", "dkms add -m $DRIVER_NAME -v $DRIVER_VERSION && \
-#                         dkms build $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION && \
-#                         dkms install --force $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION"]
-
 FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
 
 RUN apt-get update && apt-get install -y \
@@ -48,17 +43,13 @@ RUN apt-get update && apt-get install -y \
     bison \
     # audio-driver
     dkms \
+    raspberrypi-kernel \
+    raspberrypi-kernel-headers \
     i2c-tools \
     libasound2-plugins \
     alsa-base \
     alsa-utils && \
     # cleanup
-    rm -rf /var/lib/apt/lists
-
-RUN apt-get update && \
-    apt-get install \
-    raspberrypi-kernel \
-    raspberrypi-kernel-headers && \
     rm -rf /var/lib/apt/lists
     
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket \
@@ -73,17 +64,24 @@ WORKDIR "/usr/src/app/kernel-module-build"
 #RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh list
 RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src ./wm8960
 
+# Install kernel module with DKMS
+#WORKDIR "/usr/src/app/kernel-module-build/wm8960"
+#RUN ["/bin/bash", "-c", "dkms add -m $DRIVER_NAME -v $DRIVER_VERSION && \
+#                         dkms build $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION && \
+#                         dkms install --force $(uname -r) -m $DRIVER_NAME -v $DRIVER_VERSION"]
+
+
 # Copy calls from install script
-WORKDIR "/usr/src/app"
+#WORKDIR "/usr/src/app"
 
 # DTBO file added in custom image
 #COPY wm8960-soundcard.dtbo /boot/overlays
 
-COPY *.state *.conf /etc/wm8960-soundcard/
-COPY wm8960-soundcard /usr/bin/
-COPY wm8960-soundcard.service /lib/systemd/system/
+#COPY *.state *.conf /etc/wm8960-soundcard/
+#COPY wm8960-soundcard /usr/bin/
+#OPY wm8960-soundcard.service /lib/systemd/system/
 
-RUN ./install.sh
+#RUN ./install.sh
 
 WORKDIR "/usr/src/app/kernel-module-build"
 CMD ./run.sh
