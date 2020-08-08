@@ -14,6 +14,8 @@ if [ "x${is_1a}" != "x" ] ; then
 		insmod "$each/snd-soc-wm8960.ko"
 	done
 	alsactl restore
+else
+	echo "No WM8960 soundcard found, killing time..."
 fi
 
 while true; do
