@@ -48,9 +48,8 @@ RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALE
 # DTBO file added in custom image
 #COPY wm8960-soundcard.dtbo /boot/overlays
 
-#COPY *.state *.conf /etc/wm8960-soundcard/
-#COPY wm8960-soundcard /usr/bin/
-#OPY wm8960-soundcard.service /lib/systemd/system/
+COPY asound.conf /etc/asound.conf
+COPY wm8960_asound.state /var/lib/alsa/asound.state
 
 #RUN ./install.sh
 
