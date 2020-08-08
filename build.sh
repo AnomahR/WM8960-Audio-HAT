@@ -147,7 +147,7 @@ function get_and_build()
 	# the build environment. Or the headers were incorrectly generated during the os build stage.
 	# The full kernel source tarball available from v2.30+ should always work.
 	# does not work because executed in tmp dir, absolute path needed
-	/usr/src/app/kernel-module-build/workarounds.sh $device $version $output_dir
+	/usr/src/app/workarounds.sh $device $version $output_dir
 
 	# Check if we have fetched the kernel_source tarball
 	if [[ $filename == *"source"* ]]; then
