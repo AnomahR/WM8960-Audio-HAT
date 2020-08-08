@@ -1,3 +1,0 @@
-[submodule "kernel-module-build"]
-	path = kernel-module-build
-	url = https://github.com/balena-os/kernel-module-build.git
