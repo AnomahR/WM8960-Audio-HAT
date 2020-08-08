@@ -10,8 +10,6 @@ sleep 1
 
 is_1a=$(i2cdetect -y  1 0x1a 0x1a | egrep "(1a|UU)" | awk '{print $2}')
 
-
-
 if [ "x${is_1a}" != "x" ] ; then
     echo "install wm8960-soundcard"
     dtoverlay wm8960-soundcard
