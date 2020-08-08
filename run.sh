@@ -7,9 +7,9 @@ cd output
 mod_dir="wm8960_${BALENA_DEVICE_TYPE}_${OS_VERSION}*"
 for each in $mod_dir; do
 	echo Loading module from "$each"
-	insmod "$each/snd-soc-wm8960-soundcard.ko"
-	insmod "$each/snd-soc-wm8960.ko"
-	lsmod | grep wm8960
+	#insmod "$each/snd-soc-wm8960-soundcard.ko"
+	#insmod "$each/snd-soc-wm8960.ko"
+	#lsmod | grep wm8960
 	# rmmod hello
 done
 

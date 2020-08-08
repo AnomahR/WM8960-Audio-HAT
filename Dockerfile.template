@@ -30,7 +30,7 @@ ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket \
     VERSION='2.48.0+rev1.prod'
 
 COPY . "/usr/src/app/"
-WORKDIR "/usr/src/app/kernel-module-build"
+WORKDIR "/usr/src/app"
 
 #RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh list
 RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$VERSION" --src ./wm8960
@@ -54,5 +54,4 @@ RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALE
 
 #RUN ./install.sh
 
-WORKDIR "/usr/src/app/kernel-module-build"
 CMD ./run.sh
