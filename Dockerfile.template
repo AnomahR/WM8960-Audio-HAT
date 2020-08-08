@@ -1,32 +1,3 @@
-#FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
-
-#RUN apt-get update && \
-#    apt-get install --no-install-recommends \
-#    # dependencies audio-driver
-#    dkms \
-#    i2c-tools \
-#    libasound2-plugins \
-#    alsa-base \
-#    alsa-utils \
-#    # dependencies linux kernel build
-#    git \
-#    bc \
-#    bison \
-#    flex \
-#    libssl-dev \
-#    make && \
-#    rm -rf /var/lib/apt/lists
-
-# Install kernel headers
-#RUN apt-get update && \
-#    apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel
-#
-#RUN apt-get install raspberrypi-kernel-headers
-
-#COPY . "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-
-#WORKDIR "/usr/src/$DRIVER_NAME-$DRIVER_VERSION/"
-
 FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:stretch
 
 RUN apt-get update && apt-get install -y \
@@ -59,7 +30,7 @@ ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket \
     BUILD_VERSION='2.48.0+rev1.prod'
 
 COPY . "/usr/src/app/"
-WORKDIR "/usr/src/app/kernel-module-build"
+WORKDIR "/usr/src/app"
 
 #RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh list
 RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALENA_MACHINE_NAME%% --os-version "$BUILD_VERSION" --src ./wm8960
@@ -83,5 +54,4 @@ RUN BALENA_MACHINE_NAME=%%BALENA_MACHINE_NAME%% ./build.sh build --device %%BALE
 
 #RUN ./install.sh
 
-WORKDIR "/usr/src/app/kernel-module-build"
 CMD ./run.sh
