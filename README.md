@@ -9,3 +9,5 @@ dtoverlay=wm8960-soundcard
 ```
 
 After deploying the project to my Pi Zero, I changed the DT parameters as suggested in the [DAC configuration] setting the custom configuration variable `BALENA_HOST_CONFIG_dtoverlay` to "wm8960-soundcard".
+
+The repository for the complete project can be found here: https://github.com/AnomahR/balena-sound
